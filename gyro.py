@@ -1,8 +1,20 @@
-#!/usr/bin/python
 import smbus
 import math
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from random import randrange
 
-# Register
+# Create figure for plotting
+fig = plt.figure()
+gyro = fig.add_subplot(2, 1, 1, projection='3d')
+beschl = fig.add_subplot(2, 1, 2, projection='3d')
+gx = []
+gy = []
+gz = []
+bx = []
+by = []
+bz = []
+
 power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
 
@@ -39,32 +51,34 @@ address = 0x68       # via i2cdetect
 # Aktivieren, um das Modul ansprechen zu koennen
 bus.write_byte_data(address, power_mgmt_1, 0)
 
-print("Gyroskop")
-print("--------")
+# This function is called periodically from FuncAnimation
+def animate(i, gx, gy, gz, bx, by, bz):
 
-gyroskop_xout = read_word_2c(0x43)
-gyroskop_yout = read_word_2c(0x45)
-gyroskop_zout = read_word_2c(0x47)
 
-print ("gyroskop_xout: ", ("%5d" % gyroskop_xout), " skaliert: ", (gyroskop_xout / 131))
-print("gyroskop_yout: ", ("%5d" % gyroskop_yout), " skaliert: ", (gyroskop_yout / 131))
-print("gyroskop_zout: ", ("%5d" % gyroskop_zout), " skaliert: ", (gyroskop_zout / 131))
+    # Add x and y to lists
+    gx.append(read_word_2c(0x43))
+    gy.append(read_word_2c(0x45))
+    gz.append(read_word_2c(0x47))
+    bx.append(read_word_2c(0x3b))
+    by.append(read_word_2c(0x3d))
+    bz.append(read_word_2c(0x3f))
 
-print()
-print("Beschleunigungssensor")
-print("---------------------")
+    # Limit x and y lists to 20 items
+    gx = gx[-20:]
+    gy = gy[-20:]
+    gz = gz[-20:]
+    bx = bx[-20:]
+    by = by[-20:]
+    bz = bz[-20:]
 
-beschleunigung_xout = read_word_2c(0x3b)
-beschleunigung_yout = read_word_2c(0x3d)
-beschleunigung_zout = read_word_2c(0x3f)
+    # Draw x and y lists
+    gyro.clear()
+    gyro.plot(gx, gy, gz)
 
-beschleunigung_xout_skaliert = beschleunigung_xout / 16384.0
-beschleunigung_yout_skaliert = beschleunigung_yout / 16384.0
-beschleunigung_zout_skaliert = beschleunigung_zout / 16384.0
+    beschl.clear()
+    beschl.plot(bx, by, bz)
 
-print("beschleunigung_xout: ", ("%6d" % beschleunigung_xout), " skaliert: ", beschleunigung_xout_skaliert)
-print("beschleunigung_yout: ", ("%6d" % beschleunigung_yout), " skaliert: ", beschleunigung_yout_skaliert)
-print("beschleunigung_zout: ", ("%6d" % beschleunigung_zout), " skaliert: ", beschleunigung_zout_skaliert)
 
-print("X Rotation: " , get_x_rotation(beschleunigung_xout_skaliert, beschleunigung_yout_skaliert, beschleunigung_zout_skaliert))
-print("Y Rotation: " , get_y_rotation(beschleunigung_xout_skaliert, beschleunigung_yout_skaliert, beschleunigung_zout_skaliert))
+# Set up plot to call animate() function periodically
+ani = animation.FuncAnimation(fig, animate, fargs=(gx, gy, gz, bx, by, bz), interval=1000)
+plt.show()
