@@ -3,7 +3,9 @@ import smbus
 import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from flask import Response, app
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import flask
+from flask import Response, app, Flask
 from random import randrange
 
 # Create figure for plotting
@@ -85,10 +87,15 @@ def animate(i, gx, gy, gz, bx, by, bz):
 
 # Set up plot to call animate() function periodically
 ani = animation.FuncAnimation(fig, animate, fargs=(gx, gy, gz, bx, by, bz), interval=1000)
-plt.show()
 
-@app.route('/plot.png')
+app = Flask(__name__)
+
+@app.route('/plot')
 def plot_png():
+    animate(1, gx, gy, gz, bx, by, bz)
     output = io.BytesIO()
-    FigureCanvas(fig).print_png(output)
+    FigureCanvas(fig).save_png(output)
     return Response(output.getvalue(), mimetype='image/png')
+
+if __name__ == '__main__':
+   app.run(debug = False)
