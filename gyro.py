@@ -1,10 +1,14 @@
+import io
 import smbus
 import math
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from flask import Response, app
 from random import randrange
 
 # Create figure for plotting
+from matplotlib.backends.backend_template import FigureCanvas
+
 fig = plt.figure()
 gyro = fig.add_subplot(2, 1, 1, projection='3d')
 beschl = fig.add_subplot(2, 1, 2, projection='3d')
@@ -82,3 +86,9 @@ def animate(i, gx, gy, gz, bx, by, bz):
 # Set up plot to call animate() function periodically
 ani = animation.FuncAnimation(fig, animate, fargs=(gx, gy, gz, bx, by, bz), interval=1000)
 plt.show()
+
+@app.route('/plot.png')
+def plot_png():
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
