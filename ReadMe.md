@@ -15,7 +15,7 @@ i2c-bcm2708
 i2c-dev
 ```
 
-​	hinzufügen und dann den RaspberryPi neustarten
+ zu ``/etc/module`` hinzufügen und dann den RaspberryPi neustarten
 
 8. Die Packages ``i2c-tools python-smbus`` installieren
 9. Mit dem Befehl ``sudo i2cdetect -y 1`` die Hex-Adresse des Gyroskops herausfinden
