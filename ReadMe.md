@@ -2,13 +2,15 @@
 
 192.168.137.10
 
-1. An den RaspberryPi die SD-Karte und das Ethernet Kabel vom Computer anstecken
-2. Den RaspberryPi mit Strom versorgen
-3. In den Properties des Wifi-Adapters die Option "Allow other network users to connect" aktivieren
-4. Bei "Home networking connection" den Ethernet Adapter auswählen
-5. Mit Putty über den namen Hostnamen raspberrypi.local verbinden
-6. Mit ``sudo raspi-config`` i2c aktivieren
-7. Wenn noch nicht vorhanden die Zeilen
+1. Überprüfen, ob auf der SD-Karte das SSH file vorhanden ist
+2. An den RaspberryPi die SD-Karte und das Ethernet Kabel vom Computer anstecken
+3. Den RaspberryPi mit Strom versorgen
+4. In den Properties des Ethernetadapters beim Internetprotokoll Version 4 die IP-Adresse auf 192.168.137.1 und den DNS server auf 8.8.8.8 ändern.
+5. In den Properties des Wifi-Adapters die Option "Allow other network users to connect" aktivieren
+6. Bei "Home networking connection" den Ethernet Adapter auswählen
+7. Mit Putty über den namen Hostnamen raspberrypi.local verbinden
+8. Mit ``sudo raspi-config`` i2c aktivieren
+9. Wenn noch nicht vorhanden die Zeilen
 
 ```
 i2c-bcm2708
