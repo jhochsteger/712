@@ -12,8 +12,8 @@ from random import randrange
 # Create figure for plotting
 
 fig = plt.figure()
-gyro = fig.add_subplot(1, 2, 1, projection='3d')
-beschl = fig.add_subplot(1, 2, 2, projection='3d')
+gyro = fig.add_subplot(1, 3, 1, projection='3d')
+beschl = fig.add_subplot(1, 3, 3, projection='3d')
 gx = []
 gy = []
 gz = []
@@ -71,22 +71,33 @@ def animate(gx, gy, gz, bx, by, bz):
     bz.append(read_word_2c(0x3f))
 
     # Limit x and y lists to 20 items
-    gx = gx[-5:]
-    gy = gy[-5:]
-    gz = gz[-5:]
-    bx = bx[-5:]
-    by = by[-5:]
-    bz = bz[-5:]
+    gx = gx[-10:]
+    gy = gy[-10:]
+    gz = gz[-10:]
+    bx = bx[-10:]
+    by = by[-10:]
+    bz = bz[-10:]
 
     # Draw x and y lists
-    #TODO Achsenbeschriftung
     gyro.clear()
     gyro.plot(gx, gy, gz)
     gyro.set_title('Gyroskop')
+    gyro.set_xlabel('X-Rotation')
+    gyro.set_ylabel('Y-Rotation')
+    gyro.set_zlabel('Z-Rotation')
+    gyro.set_xlim([-10000, 10000])
+    gyro.set_ylim([-10000, 10000])
+    gyro.set_zlim([-10000, 10000])
 
     beschl.clear()
     beschl.plot(bx, by, bz)
     beschl.set_title('Beschleunigung')
+    beschl.set_xlabel('X-Beschleunigung')
+    beschl.set_ylabel('Y-Beschleunigung')
+    beschl.set_zlabel('Z-Beschleunigung')
+    beschl.set_xlim([-10000, 10000])
+    beschl.set_ylim([-10000, 10000])
+    beschl.set_zlim([-10000, 10000])
 
 
 app = Flask(__name__)
