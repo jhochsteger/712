@@ -7,7 +7,8 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import flask
 from flask import Response, app, Flask, render_template
 from random import randrange
-
+# Code Origin (Data): https://tutorials-raspberrypi.de/rotation-und-beschleunigung-mit-dem-raspberry-pi-messen/
+# Code Origin (Flask): https://stackoverflow.com/questions/50728328/python-how-to-show-matplotlib-in-flask
 # Create figure for plotting
 
 fig = plt.figure()
@@ -24,6 +25,7 @@ power_mgmt_1 = 0x6b
 power_mgmt_2 = 0x6c
 
 def read_byte(reg):
+    #TODO Exceptionhandling
     return bus.read_byte_data(address, reg)
 
 def read_word(reg):
@@ -77,6 +79,7 @@ def animate(gx, gy, gz, bx, by, bz):
     bz = bz[-5:]
 
     # Draw x and y lists
+    #TODO Achsenbeschriftung
     gyro.clear()
     gyro.plot(gx, gy, gz)
     gyro.set_title('Gyroskop')
