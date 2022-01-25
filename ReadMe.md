@@ -1,6 +1,6 @@
 # Embedded Devices "Anzeige und Analyse von Sensordaten"
 
-192.168.137.10
+Raspberry IP-Adress: 192.168.137.10
 
 1. Überprüfen, ob auf der SD-Karte das SSH file vorhanden ist
 2. An den RaspberryPi die SD-Karte und das Ethernet Kabel vom Computer anstecken
