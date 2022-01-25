@@ -5,15 +5,14 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 import flask
-from flask import Response, app, Flask
+from flask import Response, app, Flask, render_template
 from random import randrange
 
 # Create figure for plotting
-from matplotlib.backends.backend_template import FigureCanvas
 
 fig = plt.figure()
-gyro = fig.add_subplot(2, 1, 1, projection='3d')
-beschl = fig.add_subplot(2, 1, 2, projection='3d')
+gyro = fig.add_subplot(1, 2, 1, projection='3d')
+beschl = fig.add_subplot(1, 2, 2, projection='3d')
 gx = []
 gy = []
 gz = []
@@ -58,7 +57,7 @@ address = 0x68       # via i2cdetect
 bus.write_byte_data(address, power_mgmt_1, 0)
 
 # This function is called periodically from FuncAnimation
-def animate(i, gx, gy, gz, bx, by, bz):
+def animate(gx, gy, gz, bx, by, bz):
 
 
     # Add x and y to lists
@@ -70,32 +69,35 @@ def animate(i, gx, gy, gz, bx, by, bz):
     bz.append(read_word_2c(0x3f))
 
     # Limit x and y lists to 20 items
-    gx = gx[-20:]
-    gy = gy[-20:]
-    gz = gz[-20:]
-    bx = bx[-20:]
-    by = by[-20:]
-    bz = bz[-20:]
+    gx = gx[-5:]
+    gy = gy[-5:]
+    gz = gz[-5:]
+    bx = bx[-5:]
+    by = by[-5:]
+    bz = bz[-5:]
 
     # Draw x and y lists
     gyro.clear()
     gyro.plot(gx, gy, gz)
+    gyro.set_title('Gyroskop')
 
     beschl.clear()
     beschl.plot(bx, by, bz)
+    beschl.set_title('Beschleunigung')
 
-
-# Set up plot to call animate() function periodically
-ani = animation.FuncAnimation(fig, animate, fargs=(gx, gy, gz, bx, by, bz), interval=1000)
 
 app = Flask(__name__)
 
-@app.route('/plot')
+@app.route('/plot.png')
 def plot_png():
-    animate(1, gx, gy, gz, bx, by, bz)
+    animate(gx, gy, gz, bx, by, bz)
     output = io.BytesIO()
-    FigureCanvas(fig).save_png(output)
+    FigureCanvas(fig).print_png(output)
     return Response(output.getvalue(), mimetype='image/png')
 
+@app.route('/test')
+def charTest():
+    return render_template('./index.html')
+
 if __name__ == '__main__':
-   app.run(debug = False)
+   app.run(debug = False, host='0.0.0.0')
